@@ -1,0 +1,378 @@
+1. Project Overview
+
+Project Name: Moving Baba  
+Tagline: "Moving Made Easy"  
+Tech Stack: React.js, Firebase (Authentication), Google APIs (Places, Distance Matrix), Mockoon (Dummy APIs)  
+Phase: 1 (Frontend Development)
+
+2. Branding Guidelines
+
+Logo
+
+Design: Yellow truck with black wheels.
+
+Placement: Displayed on the landing page and dashboard header.
+
+Text: "Moving Baba" in bold, with the tagline "Moving Made Easy" below in a smaller font.
+
+Colors
+
+Primary: Yellow (#FFC107) for buttons and active states.
+
+Secondary: Black (#212121) for text and icons.
+
+Background: Light gray (#F5F5F5) for neutral areas.
+
+Error: Red (#D32F2F) for validation messages.
+
+Fonts
+
+Primary Font: Poppins (modern, clean, and friendly).
+
+Secondary Font: Roboto (for body text and smaller elements).
+
+3. UI/UX Design Requirements
+
+Layout and Spacing
+
+Use a 12-column grid system for consistent alignment.
+
+Maintain 16px padding and 8px margins for spacing consistency.
+
+Ensure responsive design for mobile, tablet, and desktop views.
+
+Typography
+
+Header: 24px bold.
+
+Subheader: 18px semi-bold.
+
+Body Text: 16px regular.
+
+Labels: 14px medium.
+
+Small Text: 12px regular (e.g., error messages, captions).
+
+Buttons
+
+Primary Button:
+
+Background: Yellow (#FFC107).
+
+Text: Black (#212121), bold.
+
+Hover: Darker yellow (#FFA000).
+
+Active: Even darker yellow (#FF8F00).
+
+Secondary Button:
+
+Background: Light gray (#E0E0E0).
+
+Text: Black (#212121), medium.
+
+Hover: Darker gray (#BDBDBD).
+
+Disabled Button:
+
+Background: Light gray (#E0E0E0).
+
+Text: Gray (#9E9E9E).
+
+Forms
+
+Input Fields:
+
+Border: 1px solid gray (#BDBDBD).
+
+Border Radius: 4px.
+
+Focus: Border color changes to yellow (#FFC107).
+
+Validation Messages:
+
+Display below the input field in red (#D32F2F).
+
+Use icons (e.g., red exclamation mark) for visual feedback.
+
+Modals
+
+Terms and Conditions Modal:
+
+Scrollable text area with a checkbox ("I have read and accept the terms").
+
+Buttons: "Accept" (primary) and "Decline" (secondary).
+
+OTP Verification Modal:
+
+Input field for OTP.
+
+"Resend OTP" link below the input.
+
+4. Landing Page Layout Design
+
+The landing page is the first interaction point for users. It should be clean, intuitive, and visually appealing. Below is the detailed layout design:
+
+Header
+
+Left Section:
+
+Logo: Yellow truck with black wheels.
+
+Brand Name: "Moving Baba" in bold.
+
+Tagline: "Moving Made Easy" below the brand name in a smaller font.
+
+Right Section:
+
+Service Provider Button: Positioned in the top-right corner.
+
+Text: "Service Provider."
+
+Style: Secondary button (light gray background, black text).
+
+Hover: Darker gray background.
+
+Action: Redirects to a Service Provider login page (placeholder for now).
+
+First Section
+
+Centered Content:
+
+Continue with Google Button:
+
+Text: "Continue with Google."
+
+Icon: Google logo (follow Google branding guidelines).
+
+Style: Blue background with white text.
+
+Hover: Slightly darker blue.
+
+Action: Firebase handles Google authentication.
+
+Or Log In with Email:
+
+Text: "Or log in with email" (clickable link).
+
+Style: Smaller text below the Google button.
+
+Action: Expands the login form.
+
+Second Section
+
+Tabs:
+
+Login Tab (Default Active):
+
+Fields:
+
+Email (text input).
+
+Password (password input).
+
+Button: "Login" (primary button).
+
+Forgot Password Link: Below the login button.
+
+Text: "Forgot Password?"
+
+Action: Redirects to the Forgot Password screen.
+
+Signup Tab:
+
+Fields:
+
+Email (text input).
+
+Password (password input).
+
+Phone Number (text input with country code dropdown).
+
+Button: "Sign Up" (primary button).
+
+reCAPTCHA: Below the signup button for bot protection.
+
+Terms and Conditions Link: Below the reCAPTCHA.
+
+Text: "By signing up, you agree to our Terms and Conditions."
+
+Action: Opens the Terms and Conditions Modal.
+
+5. Dashboard Layout Design
+
+Header
+
+Left Section:
+
+Logo: Yellow truck with black wheels.
+
+Brand Name: "Moving Baba" in bold.
+
+Right Section:
+
+User Profile Icon:
+
+Dropdown Options:
+
+Profile.
+
+Logout.
+
+Tabs
+
+Order Creation Tab (Default Active):
+
+Left Section (Scrollable):
+
+Collapsible Cards:
+
+Pickup Address:
+
+Google Places API auto-completion.
+
+Property Type (Multistorey/Single Storey).
+
+Flat Number, Floor Number (if Multistorey).
+
+Driveway Availability (Yes/No).
+
+Drop Address: Same fields as Pickup Address.
+
+Items Search:
+
+Search bar with predefined items.
+
+Quantity adjustment (+/- buttons).
+
+Custom Item Row: Item Name, Weight, Dimensions, Quantity.
+
+Right Section (Cart):
+
+Pickup and Drop Addresses: Display as text.
+
+Trip Distance: Calculated using Google Distance Matrix API.
+
+List of Items: Display item name, quantity, and total weight.
+
+Submit Order for Bids Button: Disabled until all required fields are filled.
+
+Manage Bids Tab: Placeholder for now.
+
+Track Delivery Tab: Placeholder for now.
+
+Manage Payments Tab: Placeholder for now.
+
+Profile Tab:
+
+Verified Status: Green ticks for Email and Phone.
+
+Change Password: Form with current password, new password, and confirm new password.
+
+Order History: Table with columns (Order ID, Date, Status).
+
+6. Responsive Design Guidelines
+
+Breakpoints
+
+Mobile: 0–767px.
+
+Tablet: 768–1023px.
+
+Desktop: 1024px and above.
+
+Grid System
+
+Use a 12-column grid for consistent alignment.
+
+Adjust column spans based on screen size (e.g., 12 columns for mobile, 6 for tablet, 4 for desktop).
+
+Spacing
+
+Maintain consistent padding (16px) and margins (8px).
+
+Reduce spacing for mobile views to save screen real estate.
+
+7. User Flow Transitions
+
+Smooth Animations
+
+Use fade-in/fade-out transitions for modals.
+
+Slide animations for collapsible cards.
+
+Loading States
+
+Display spinners or progress bars during API calls (e.g., OTP verification, order submission).
+
+Error Handling
+
+Display toast notifications for errors (e.g., "Invalid OTP," "Network Error").
+
+8. Folder Structure
+
+/src
+  /components
+    - AuthModal.js          // Terms and Conditions modal
+    - OrderCreation.js      // Order creation tab
+    - DashboardTabs.js      // Manage tabs (Order, Bids, Track, Payments, Profile)
+  /pages
+    - LoginPage.js          // Login and Signup page
+    - Dashboard.js          // Main dashboard page
+  /services
+    - api.js                // Mock API calls
+    - firebase.js           // Firebase configuration and methods
+  /styles
+    - globals.css           // Global styles
+  /utils
+    - env.js                // Environment variables
+  App.js                    // Main application component
+  index.js                  // Entry point
+  .env                      // Environment configuration
+  package.json              // Project dependencies and scripts
+  run.bat                   // Batch script to set up the project
+
+9. Batch Script for Folder Structure
+
+@echo off
+REM Full Path: C:\ElonReddy\MovingCompany\run.bat
+REM Create folder structure
+mkdir C:\ElonReddy\MovingCompany\src\components
+mkdir C:\ElonReddy\MovingCompany\src\pages
+mkdir C:\ElonReddy\MovingCompany\src\services
+mkdir C:\ElonReddy\MovingCompany\src\styles
+mkdir C:\ElonReddy\MovingCompany\src\utils
+REM Create empty files
+type nul > C:\ElonReddy\MovingCompany\src\components\AuthModal.js
+type nul > C:\ElonReddy\MovingCompany\src\components\OrderCreation.js
+type nul > C:\ElonReddy\MovingCompany\src\components\DashboardTabs.js
+type nul > C:\ElonReddy\MovingCompany\src\pages\LoginPage.js
+type nul > C:\ElonReddy\MovingCompany\src\pages\Dashboard.js
+type nul > C:\ElonReddy\MovingCompany\src\services\api.js
+type nul > C:\ElonReddy\MovingCompany\src\services\firebase.js
+type nul > C:\ElonReddy\MovingCompany\src\styles\globals.css
+type nul > C:\ElonReddy\MovingCompany\src\utils\env.js
+type nul > C:\ElonReddy\MovingCompany\App.js
+type nul > C:\ElonReddy\MovingCompany\index.js
+type nul > C:\ElonReddy\MovingCompany\.env
+type nul > C:\ElonReddy\MovingCompany\package.json
+echo Folder structure and empty files created successfully!
+pause
+
+10. Instructions to Start the Project
+
+Run the batch script to create the folder structure and empty files:
+
+C:\\ElonReddy\\MovingCompany\\run.bat
+
+Populate the package.json file with the required dependencies.
+
+Install dependencies:
+
+npm install
+
+Start the development server:
+
+npm start
+
+This final, comprehensive documentation covers all aspects of the Moving Baba frontend development project, ensuring a clear and structured approach. Let me know if you need further refinements or additional details!
