@@ -1,8 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PlusIcon, MinusIcon, XIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { useState } from "react";
+
+export interface Item {
+  name: string;
+  weight?: string;
+  dimensions?: string;
+  quantity: number;
+}
+
+interface ItemsListProps {
+  onChange: (items: Item[]) => void;
+}
 
 const PREDEFINED_ITEMS = [
   "Sofa",
@@ -14,20 +25,16 @@ const PREDEFINED_ITEMS = [
   "Washing Machine",
 ];
 
-interface ItemsListProps {
-  onChange: (items: any[]) => void;
-}
-
 export default function ItemsList({ onChange }: ItemsListProps) {
-  const [items, setItems] = useState<any[]>([]);
-  const [customItem, setCustomItem] = useState({
+  const [items, setItems] = useState<Item[]>([]);
+  const [customItem, setCustomItem] = useState<Item>({
     name: "",
     weight: "",
     dimensions: "",
     quantity: 1,
   });
 
-  const updateItems = (newItems: any[]) => {
+  const updateItems = (newItems: Item[]) => {
     setItems(newItems);
     onChange(newItems);
   };
@@ -37,7 +44,7 @@ export default function ItemsList({ onChange }: ItemsListProps) {
     if (existingItem) {
       updateItems(
         items.map(item =>
-          item.name === name 
+          item.name === name
             ? { ...item, quantity: item.quantity + 1 }
             : item
         )
