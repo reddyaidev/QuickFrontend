@@ -8,9 +8,21 @@ import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { UserIcon } from "lucide-react";
+import { useState } from "react";
 
 export default function LandingPage() {
-  const form = useForm();
+  const [isLoading, setIsLoading] = useState(false);
+  const loginForm = useForm();
+  const signupForm = useForm();
+
+  const handleGuestLogin = async () => {
+    try {
+      setIsLoading(true);
+      await loginWithGoogle();
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#F5F5F5]">
@@ -23,11 +35,12 @@ export default function LandingPage() {
         <Card className="max-w-md mx-auto">
           <CardContent className="pt-6">
             <Button 
-              onClick={loginWithGoogle} 
+              onClick={handleGuestLogin}
+              disabled={isLoading}
               className="w-full mb-4 bg-[#FFC107] text-black hover:bg-[#FFA000]"
             >
               <UserIcon className="mr-2 h-5 w-5" />
-              Continue as Guest
+              {isLoading ? "Logging in..." : "Continue as Guest"}
             </Button>
 
             <div className="relative my-6">
@@ -48,7 +61,7 @@ export default function LandingPage() {
               </TabsList>
 
               <TabsContent value="login">
-                <Form {...form}>
+                <Form {...loginForm}>
                   <form className="space-y-4">
                     <FormField
                       name="email"
@@ -80,7 +93,7 @@ export default function LandingPage() {
               </TabsContent>
 
               <TabsContent value="signup">
-                <Form {...form}>
+                <Form {...signupForm}>
                   <form className="space-y-4">
                     <FormField
                       name="email"

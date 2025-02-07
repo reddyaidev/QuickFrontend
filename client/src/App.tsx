@@ -10,18 +10,26 @@ import { useEffect, useState } from "react";
 
 function Router() {
   const [user, setUser] = useState(auth.currentUser);
-  
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    return auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);
+      setIsLoading(false);
     });
+
+    return () => unsubscribe();
   }, []);
+
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
 
   return (
     <Switch>
       <Route path="/" component={user ? Dashboard : LandingPage} />
-      <Route path="/dashboard" component={Dashboard}>
-        {!user && window.location.replace("/")}
+      <Route path="/dashboard">
+        {user ? <Dashboard /> : <LandingPage />}
       </Route>
       <Route component={NotFound} />
     </Switch>

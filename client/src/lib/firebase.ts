@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-//import { getAuth, signInWithRedirect, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -10,9 +9,18 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-//export const auth = getAuth(app);
 
-const mockUser = {
+type AuthUser = {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  phoneNumber: string | null;
+} | null;
+
+type AuthStateCallback = (user: AuthUser) => void;
+
+const mockUser: AuthUser = {
   uid: 'guest',
   email: 'guest@example.com',
   displayName: 'Guest User',
@@ -21,34 +29,46 @@ const mockUser = {
 };
 
 class MockAuth {
-  currentUser = null;
-  listeners = new Set();
+  private _currentUser: AuthUser;
+  private listeners: Set<AuthStateCallback>;
+
+  constructor() {
+    this.listeners = new Set();
+    // Initialize from localStorage if available
+    const savedUser = localStorage.getItem('mockAuthUser');
+    this._currentUser = savedUser ? JSON.parse(savedUser) : null;
+  }
 
   signInAsGuest() {
-    this.currentUser = mockUser;
+    this._currentUser = mockUser;
+    localStorage.setItem('mockAuthUser', JSON.stringify(mockUser));
     this.notifyListeners();
   }
 
   signOut() {
-    this.currentUser = null;
+    this._currentUser = null;
+    localStorage.removeItem('mockAuthUser');
     this.notifyListeners();
   }
 
-  onAuthStateChanged(callback) {
+  onAuthStateChanged(callback: AuthStateCallback) {
     this.listeners.add(callback);
-    callback(this.currentUser);
+    callback(this._currentUser);
     return () => this.listeners.delete(callback);
   }
 
+  get currentUser(): AuthUser {
+    return this._currentUser;
+  }
+
   private notifyListeners() {
-    this.listeners.forEach(callback => callback(this.currentUser));
+    this.listeners.forEach(callback => callback(this._currentUser));
   }
 }
 
 export const auth = new MockAuth();
 
 export const loginWithGoogle = async () => {
-  // Mock delay for realistic feel
   await new Promise(resolve => setTimeout(resolve, 500));
   auth.signInAsGuest();
 };
