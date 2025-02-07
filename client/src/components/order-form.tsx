@@ -12,12 +12,31 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { PlusIcon, MinusIcon, XIcon } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+
+interface AddressFormData {
+  formatted_address?: string;
+  propertyType: "single" | "multi";
+  hasDriveway: boolean;
+  hasLift?: boolean;
+  flatNumber?: string;
+  floorNumber?: number;
+}
+
+const defaultAddressData: AddressFormData = {
+  propertyType: "single",
+  hasDriveway: false,
+};
 
 export default function OrderForm() {
+  const [pickupAddress, setPickupAddress] = useState<AddressFormData>(defaultAddressData);
+  const [dropAddress, setDropAddress] = useState<AddressFormData>(defaultAddressData);
+  const [items, setItems] = useState<any[]>([]);
+  const [distance, setDistance] = useState(0);
+
   const form = useForm({
     resolver: zodResolver(insertOrderSchema),
     defaultValues: {
@@ -26,7 +45,18 @@ export default function OrderForm() {
     }
   });
 
-  const [distance, setDistance] = useState(0);
+  const updateItemQuantity = (index: number, change: number) => {
+    const newItems = [...items];
+    const item = newItems[index];
+
+    if (item.quantity + change <= 0) {
+      newItems.splice(index, 1);
+    } else {
+      item.quantity += change;
+    }
+
+    setItems(newItems);
+  };
 
   return (
     <div className="grid lg:grid-cols-3 gap-8">
@@ -39,42 +69,9 @@ export default function OrderForm() {
                 <AccordionContent>
                   <AddressInput 
                     name="pickupAddress"
-                    onChange={(address) => {
-                      form.setValue("pickupAddress", address);
-                    }}
+                    value={pickupAddress}
+                    onChange={setPickupAddress}
                   />
-                  
-                  <div className="mt-4 space-y-4">
-                    <div>
-                      <Label>Property Type</Label>
-                      <RadioGroup 
-                        defaultValue="single"
-                        onValueChange={(val) => form.setValue("propertyType", val)}
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="single" id="single" />
-                          <Label htmlFor="single">Single Storey</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="multi" id="multi" />
-                          <Label htmlFor="multi">Multistorey</Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
-
-                    {form.watch("propertyType") === "multi" && (
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label>Flat Number</Label>
-                          <Input />
-                        </div>
-                        <div>
-                          <Label>Floor Number</Label>
-                          <Input type="number" />
-                        </div>
-                      </div>
-                    )}
-                  </div>
                 </AccordionContent>
               </AccordionItem>
 
@@ -83,9 +80,8 @@ export default function OrderForm() {
                 <AccordionContent>
                   <AddressInput 
                     name="dropAddress"
-                    onChange={(address) => {
-                      form.setValue("dropAddress", address);
-                    }}
+                    value={dropAddress}
+                    onChange={setDropAddress}
                   />
                 </AccordionContent>
               </AccordionItem>
@@ -94,7 +90,7 @@ export default function OrderForm() {
                 <AccordionTrigger>Items</AccordionTrigger>
                 <AccordionContent>
                   <ItemsList
-                    onChange={(items) => form.setValue("items", items)}
+                    onChange={setItems}
                   />
                 </AccordionContent>
               </AccordionItem>
@@ -105,45 +101,133 @@ export default function OrderForm() {
 
       <Card className="p-6">
         <h3 className="font-semibold mb-4">Order Summary</h3>
-        
-        <div className="space-y-4 mb-6">
-          <div>
-            <Label>Pickup Address</Label>
-            <p className="text-sm text-muted-foreground">
-              {form.watch("pickupAddress")?.formatted_address || "Not selected"}
-            </p>
-          </div>
-          
-          <div>
-            <Label>Drop Address</Label>
-            <p className="text-sm text-muted-foreground">
-              {form.watch("dropAddress")?.formatted_address || "Not selected"}
-            </p>
+
+        <div className="space-y-6">
+          {/* Addresses Section */}
+          <div className="space-y-4">
+            <div>
+              <Label>Pickup Address</Label>
+              <p className="text-sm text-muted-foreground">
+                {pickupAddress.formatted_address || "Not selected"}
+                {pickupAddress.formatted_address && (
+                  <>
+                    <br />
+                    {pickupAddress.propertyType === "multi" && (
+                      <>
+                        Flat: {pickupAddress.flatNumber}, Floor: {pickupAddress.floorNumber}
+                        <br />
+                      </>
+                    )}
+                    {pickupAddress.hasDriveway ? "Has driveway" : "No driveway"}
+                    {pickupAddress.propertyType === "multi" && (
+                      <>, {pickupAddress.hasLift ? "Has lift" : "No lift"}</>
+                    )}
+                  </>
+                )}
+              </p>
+            </div>
+
+            <div>
+              <Label>Drop Address</Label>
+              <p className="text-sm text-muted-foreground">
+                {dropAddress.formatted_address || "Not selected"}
+                {dropAddress.formatted_address && (
+                  <>
+                    <br />
+                    {dropAddress.propertyType === "multi" && (
+                      <>
+                        Flat: {dropAddress.flatNumber}, Floor: {dropAddress.floorNumber}
+                        <br />
+                      </>
+                    )}
+                    {dropAddress.hasDriveway ? "Has driveway" : "No driveway"}
+                    {dropAddress.propertyType === "multi" && (
+                      <>, {dropAddress.hasLift ? "Has lift" : "No lift"}</>
+                    )}
+                  </>
+                )}
+              </p>
+            </div>
           </div>
 
-          <div>
-            <Label>Distance</Label>
-            <p className="text-sm text-muted-foreground">{distance} km</p>
+          <Separator />
+
+          {/* Trip Details Section */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Trip Distance</Label>
+              <p className="text-sm text-muted-foreground">{distance} km</p>
+            </div>
+            <div>
+              <Label>Total Items</Label>
+              <p className="text-sm text-muted-foreground">
+                {items.reduce((sum, item) => sum + item.quantity, 0)}
+              </p>
+            </div>
           </div>
 
-          <div>
-            <Label>Items</Label>
-            <ul className="text-sm text-muted-foreground">
-              {form.watch("items")?.map((item: any) => (
-                <li key={item.name}>
-                  {item.name} x {item.quantity}
-                </li>
-              ))}
-            </ul>
-          </div>
+          <Separator />
+
+          {/* Items List Section */}
+          {items.length > 0 && (
+            <div>
+              <Label>Items</Label>
+              <div className="space-y-2 mt-2">
+                {items.map((item, index) => (
+                  <div key={index} className="flex items-center justify-between p-2 border rounded-md">
+                    <div className="flex-1">
+                      <p className="font-medium">{item.name}</p>
+                      {item.weight && (
+                        <p className="text-sm text-muted-foreground">
+                          {item.weight}kg {item.dimensions && `- ${item.dimensions}`}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => updateItemQuantity(index, -1)}
+                      >
+                        <MinusIcon className="h-4 w-4" />
+                      </Button>
+                      <span>{item.quantity}</span>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => updateItemQuantity(index, 1)}
+                      >
+                        <PlusIcon className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="ml-2"
+                        onClick={() => {
+                          const newItems = [...items];
+                          newItems.splice(index, 1);
+                          setItems(newItems);
+                        }}
+                      >
+                        <XIcon className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <Separator />
+
+          {/* Submit Button */}
+          <Button 
+            className="w-full bg-[#FFC107] text-black hover:bg-[#FFA000]"
+            disabled={!pickupAddress.formatted_address || !dropAddress.formatted_address || items.length === 0}
+          >
+            Submit Order for Bids
+          </Button>
         </div>
-
-        <Button 
-          className="w-full bg-[#FFC107] text-black hover:bg-[#FFA000]"
-          disabled={!form.formState.isValid}
-        >
-          Submit Order for Bids
-        </Button>
       </Card>
     </div>
   );
