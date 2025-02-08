@@ -110,25 +110,25 @@ export default function ItemsList({ onChange }: ItemsListProps) {
 
       <div>
         <Label>Custom Item</Label>
-        <div className="grid gap-4 mt-2">
-          <div className="grid grid-cols-2 gap-4">
+        <div className="flex items-center gap-2 mt-2">
+          <Input
+            placeholder="Item name"
+            className="flex-1"
+            value={customItem.name}
+            onChange={e => setCustomItem({ ...customItem, name: e.target.value })}
+          />
+          <Input
+            placeholder="Weight (kg)"
+            type="number"
+            className="w-24"
+            value={customItem.weight}
+            onChange={e => setCustomItem({ ...customItem, weight: e.target.value })}
+          />
+          <div className="flex items-center gap-1">
             <Input
-              placeholder="Item name"
-              value={customItem.name}
-              onChange={e => setCustomItem({ ...customItem, name: e.target.value })}
-            />
-            <Input
-              placeholder="Weight (kg)"
+              placeholder="L"
               type="number"
-              value={customItem.weight}
-              onChange={e => setCustomItem({ ...customItem, weight: e.target.value })}
-            />
-          </div>
-
-          <div className="grid grid-cols-4 gap-4">
-            <Input
-              placeholder="Length"
-              type="number"
+              className="w-16"
               value={customItem.dimensions?.length}
               onChange={e => setCustomItem({
                 ...customItem,
@@ -138,9 +138,11 @@ export default function ItemsList({ onChange }: ItemsListProps) {
                 }
               })}
             />
+            <span>×</span>
             <Input
-              placeholder="Width"
+              placeholder="W"
               type="number"
+              className="w-16"
               value={customItem.dimensions?.width}
               onChange={e => setCustomItem({
                 ...customItem,
@@ -150,9 +152,11 @@ export default function ItemsList({ onChange }: ItemsListProps) {
                 }
               })}
             />
+            <span>×</span>
             <Input
-              placeholder="Height"
+              placeholder="H"
               type="number"
+              className="w-16"
               value={customItem.dimensions?.height}
               onChange={e => setCustomItem({
                 ...customItem,
@@ -162,30 +166,36 @@ export default function ItemsList({ onChange }: ItemsListProps) {
                 }
               })}
             />
-            <Select 
-              value={customItem.dimensions?.unit}
-              onValueChange={(value: 'cm' | 'm' | 'mm') => setCustomItem({
-                ...customItem,
-                dimensions: {
-                  ...customItem.dimensions!,
-                  unit: value
-                }
-              })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Unit" />
-              </SelectTrigger>
-              <SelectContent>
-                {DIMENSION_UNITS.map(unit => (
-                  <SelectItem key={unit.value} value={unit.value}>
-                    {unit.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
-
-          <Button onClick={addCustomItem}>Add Item</Button>
+          <Select 
+            value={customItem.dimensions?.unit}
+            onValueChange={(value: 'cm' | 'm' | 'mm') => setCustomItem({
+              ...customItem,
+              dimensions: {
+                ...customItem.dimensions!,
+                unit: value
+              }
+            })}
+          >
+            <SelectTrigger className="w-20">
+              <SelectValue placeholder="Unit" />
+            </SelectTrigger>
+            <SelectContent>
+              {DIMENSION_UNITS.map(unit => (
+                <SelectItem key={unit.value} value={unit.value}>
+                  {unit.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={addCustomItem}
+            disabled={!customItem.name}
+          >
+            <PlusIcon className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
@@ -196,7 +206,7 @@ export default function ItemsList({ onChange }: ItemsListProps) {
             {(item.weight || item.dimensions) && (
               <p className="text-sm text-muted-foreground">
                 {item.weight && `${item.weight}kg`}
-                {item.dimensions && ` - ${item.dimensions.length}x${item.dimensions.width}x${item.dimensions.height} ${item.dimensions.unit}`}
+                {item.dimensions && ` - ${item.dimensions.length}×${item.dimensions.width}×${item.dimensions.height} ${item.dimensions.unit}`}
               </p>
             )}
           </div>
