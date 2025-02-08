@@ -120,6 +120,7 @@ export default function ItemsList({ onChange }: ItemsListProps) {
           <Input
             placeholder="Weight (kg)"
             type="number"
+            min="0"
             className="w-24"
             value={customItem.weight}
             onChange={e => setCustomItem({ ...customItem, weight: e.target.value })}
@@ -128,6 +129,7 @@ export default function ItemsList({ onChange }: ItemsListProps) {
             <Input
               placeholder="L"
               type="number"
+              min="0"
               className="w-16"
               value={customItem.dimensions?.length}
               onChange={e => setCustomItem({
@@ -142,6 +144,7 @@ export default function ItemsList({ onChange }: ItemsListProps) {
             <Input
               placeholder="W"
               type="number"
+              min="0"
               className="w-16"
               value={customItem.dimensions?.width}
               onChange={e => setCustomItem({
@@ -156,6 +159,7 @@ export default function ItemsList({ onChange }: ItemsListProps) {
             <Input
               placeholder="H"
               type="number"
+              min="0"
               className="w-16"
               value={customItem.dimensions?.height}
               onChange={e => setCustomItem({
@@ -198,61 +202,6 @@ export default function ItemsList({ onChange }: ItemsListProps) {
           </Button>
         </div>
       </div>
-
-      {items.map((item, index) => (
-        <div key={index} className="flex items-center gap-4 p-2 border rounded-md">
-          <div className="flex-1">
-            <p className="font-medium">{item.name}</p>
-            {(item.weight || item.dimensions) && (
-              <p className="text-sm text-muted-foreground">
-                {item.weight && `${item.weight}kg`}
-                {item.dimensions && ` - ${item.dimensions.length}×${item.dimensions.width}×${item.dimensions.height} ${item.dimensions.unit}`}
-              </p>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => {
-                const newItems = [...items];
-                if (newItems[index].quantity > 1) {
-                  newItems[index].quantity--;
-                } else {
-                  newItems.splice(index, 1);
-                }
-                updateItems(newItems);
-              }}
-            >
-              <MinusIcon className="h-4 w-4" />
-            </Button>
-            <span>{item.quantity}</span>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => {
-                const newItems = [...items];
-                newItems[index].quantity++;
-                updateItems(newItems);
-              }}
-            >
-              <PlusIcon className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="ml-2"
-              onClick={() => {
-                const newItems = [...items];
-                newItems.splice(index, 1);
-                updateItems(newItems);
-              }}
-            >
-              <XIcon className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      ))}
     </div>
   );
 }
