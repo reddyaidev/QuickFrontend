@@ -155,9 +155,10 @@ export default function OrderForm() {
                   <div key={index} className="flex items-center justify-between p-2 border rounded-md">
                     <div className="flex-1">
                       <p className="font-medium">{item.name}</p>
-                      {item.weight && (
+                      {(item.weight || item.dimensions) && (
                         <p className="text-sm text-muted-foreground">
-                          {item.weight}kg {item.dimensions && `- ${item.dimensions}`}
+                          {item.weight && `${item.weight}kg`}
+                          {item.dimensions && ` - ${item.dimensions.length}x${item.dimensions.width}x${item.dimensions.height} ${item.dimensions.unit}`}
                         </p>
                       )}
                     </div>
@@ -199,17 +200,12 @@ export default function OrderForm() {
           <Separator />
 
           {/* Submit Button */}
-          <div>
-            <p className="text-sm text-muted-foreground mb-2">
-              Total Items: {totalItems}
-            </p>
-            <Button 
-              className="w-full bg-[#FFC107] text-black hover:bg-[#FFA000]"
-              disabled={!pickupAddress.formatted_address || !dropAddress.formatted_address || items.length === 0}
-            >
-              Submit Order for Bids
-            </Button>
-          </div>
+          <Button 
+            className="w-full bg-[#FFC107] text-black hover:bg-[#FFA000]"
+            disabled={!pickupAddress.formatted_address || !dropAddress.formatted_address || items.length === 0}
+          >
+            Submit Order for Bids
+          </Button>
         </div>
       </Card>
     </div>

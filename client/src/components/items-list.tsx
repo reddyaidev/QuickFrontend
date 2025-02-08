@@ -3,11 +3,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PlusIcon, MinusIcon, XIcon } from "lucide-react";
 import { useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+export interface Dimensions {
+  length: string;
+  width: string;
+  height: string;
+  unit: 'cm' | 'm' | 'mm';
+}
 
 export interface Item {
   name: string;
   weight?: string;
-  dimensions?: string;
+  dimensions?: Dimensions;
   quantity: number;
 }
 
@@ -25,12 +33,23 @@ const PREDEFINED_ITEMS = [
   "Washing Machine",
 ];
 
+const DIMENSION_UNITS = [
+  { value: 'cm', label: 'Centimeters' },
+  { value: 'm', label: 'Meters' },
+  { value: 'mm', label: 'Millimeters' },
+];
+
 export default function ItemsList({ onChange }: ItemsListProps) {
   const [items, setItems] = useState<Item[]>([]);
   const [customItem, setCustomItem] = useState<Item>({
     name: "",
     weight: "",
-    dimensions: "",
+    dimensions: {
+      length: "",
+      width: "",
+      height: "",
+      unit: 'cm'
+    },
     quantity: 1,
   });
 
@@ -60,7 +79,12 @@ export default function ItemsList({ onChange }: ItemsListProps) {
     setCustomItem({
       name: "",
       weight: "",
-      dimensions: "",
+      dimensions: {
+        length: "",
+        width: "",
+        height: "",
+        unit: 'cm'
+      },
       quantity: 1,
     });
   };
@@ -86,87 +110,139 @@ export default function ItemsList({ onChange }: ItemsListProps) {
 
       <div>
         <Label>Custom Item</Label>
-        <div className="grid grid-cols-4 gap-4 mt-2">
-          <Input
-            placeholder="Item name"
-            value={customItem.name}
-            onChange={e => setCustomItem({ ...customItem, name: e.target.value })}
-          />
-          <Input
-            placeholder="Weight (kg)"
-            type="number"
-            value={customItem.weight}
-            onChange={e => setCustomItem({ ...customItem, weight: e.target.value })}
-          />
-          <Input
-            placeholder="Dimensions"
-            value={customItem.dimensions}
-            onChange={e => setCustomItem({ ...customItem, dimensions: e.target.value })}
-          />
+        <div className="grid gap-4 mt-2">
+          <div className="grid grid-cols-2 gap-4">
+            <Input
+              placeholder="Item name"
+              value={customItem.name}
+              onChange={e => setCustomItem({ ...customItem, name: e.target.value })}
+            />
+            <Input
+              placeholder="Weight (kg)"
+              type="number"
+              value={customItem.weight}
+              onChange={e => setCustomItem({ ...customItem, weight: e.target.value })}
+            />
+          </div>
+
+          <div className="grid grid-cols-4 gap-4">
+            <Input
+              placeholder="Length"
+              type="number"
+              value={customItem.dimensions?.length}
+              onChange={e => setCustomItem({
+                ...customItem,
+                dimensions: {
+                  ...customItem.dimensions!,
+                  length: e.target.value
+                }
+              })}
+            />
+            <Input
+              placeholder="Width"
+              type="number"
+              value={customItem.dimensions?.width}
+              onChange={e => setCustomItem({
+                ...customItem,
+                dimensions: {
+                  ...customItem.dimensions!,
+                  width: e.target.value
+                }
+              })}
+            />
+            <Input
+              placeholder="Height"
+              type="number"
+              value={customItem.dimensions?.height}
+              onChange={e => setCustomItem({
+                ...customItem,
+                dimensions: {
+                  ...customItem.dimensions!,
+                  height: e.target.value
+                }
+              })}
+            />
+            <Select 
+              value={customItem.dimensions?.unit}
+              onValueChange={(value: 'cm' | 'm' | 'mm') => setCustomItem({
+                ...customItem,
+                dimensions: {
+                  ...customItem.dimensions!,
+                  unit: value
+                }
+              })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Unit" />
+              </SelectTrigger>
+              <SelectContent>
+                {DIMENSION_UNITS.map(unit => (
+                  <SelectItem key={unit.value} value={unit.value}>
+                    {unit.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           <Button onClick={addCustomItem}>Add Item</Button>
         </div>
       </div>
 
-      {items.length > 0 && (
-        <div>
-          <Label>Added Items</Label>
-          <div className="space-y-2 mt-2">
-            {items.map((item, index) => (
-              <div key={index} className="flex items-center gap-4 p-2 border rounded-md">
-                <div className="flex-1">
-                  <p className="font-medium">{item.name}</p>
-                  {item.weight && (
-                    <p className="text-sm text-muted-foreground">
-                      {item.weight}kg {item.dimensions && `- ${item.dimensions}`}
-                    </p>
-                  )}
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => {
-                      const newItems = [...items];
-                      if (newItems[index].quantity > 1) {
-                        newItems[index].quantity--;
-                      } else {
-                        newItems.splice(index, 1);
-                      }
-                      updateItems(newItems);
-                    }}
-                  >
-                    <MinusIcon className="h-4 w-4" />
-                  </Button>
-                  <span>{item.quantity}</span>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => {
-                      const newItems = [...items];
-                      newItems[index].quantity++;
-                      updateItems(newItems);
-                    }}
-                  >
-                    <PlusIcon className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="ml-2"
-                    onClick={() => {
-                      const newItems = [...items];
-                      newItems.splice(index, 1);
-                      updateItems(newItems);
-                    }}
-                  >
-                    <XIcon className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
+      {items.map((item, index) => (
+        <div key={index} className="flex items-center gap-4 p-2 border rounded-md">
+          <div className="flex-1">
+            <p className="font-medium">{item.name}</p>
+            {(item.weight || item.dimensions) && (
+              <p className="text-sm text-muted-foreground">
+                {item.weight && `${item.weight}kg`}
+                {item.dimensions && ` - ${item.dimensions.length}x${item.dimensions.width}x${item.dimensions.height} ${item.dimensions.unit}`}
+              </p>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                const newItems = [...items];
+                if (newItems[index].quantity > 1) {
+                  newItems[index].quantity--;
+                } else {
+                  newItems.splice(index, 1);
+                }
+                updateItems(newItems);
+              }}
+            >
+              <MinusIcon className="h-4 w-4" />
+            </Button>
+            <span>{item.quantity}</span>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                const newItems = [...items];
+                newItems[index].quantity++;
+                updateItems(newItems);
+              }}
+            >
+              <PlusIcon className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="ml-2"
+              onClick={() => {
+                const newItems = [...items];
+                newItems.splice(index, 1);
+                updateItems(newItems);
+              }}
+            >
+              <XIcon className="h-4 w-4" />
+            </Button>
           </div>
         </div>
-      )}
+      ))}
     </div>
   );
 }
