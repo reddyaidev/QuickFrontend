@@ -2,8 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FloatingLabelInput } from "@/components/ui/floating-label-input";
 import { auth } from "@/lib/firebase";
 import { CheckCircle2 } from "lucide-react";
 
@@ -39,17 +38,22 @@ export default function ProfileForm() {
             <h3 className="text-lg font-semibold mb-4">Change Password</h3>
             <Form {...form}>
               <form className="space-y-4">
-                <div>
-                  <Label>Current Password</Label>
-                  <Input type="password" {...form.register("currentPassword")} />
-                </div>
-                <div>
-                  <Label>New Password</Label>
-                  <Input type="password" {...form.register("newPassword")} />
-                </div>
-                <div>
-                  <Label>Confirm New Password</Label>
-                  <Input type="password" {...form.register("confirmPassword")} />
+                <div className="space-y-6">
+                  <FloatingLabelInput
+                    label="Current Password"
+                    type="password"
+                    {...form.register("currentPassword")}
+                  />
+                  <FloatingLabelInput
+                    label="New Password"
+                    type="password"
+                    {...form.register("newPassword")}
+                  />
+                  <FloatingLabelInput
+                    label="Confirm New Password"
+                    type="password"
+                    {...form.register("confirmPassword")}
+                  />
                 </div>
                 <Button type="submit">Update Password</Button>
               </form>

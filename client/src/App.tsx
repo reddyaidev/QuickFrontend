@@ -7,6 +7,7 @@ import Dashboard from "./pages/dashboard";
 import NotFound from "./pages/not-found";
 import { auth } from "./lib/firebase";
 import { useEffect, useState } from "react";
+import { clearAllFormData } from "./lib/form-utils";
 
 function Router() {
   const [user, setUser] = useState(auth.currentUser);
@@ -14,8 +15,14 @@ function Router() {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
+      const previousUser = auth.currentUser;
       setUser(user);
       setIsLoading(false);
+      
+      // Clear form data when user logs out
+      if (previousUser && !user) {
+        clearAllFormData();
+      }
     });
 
     return () => unsubscribe();

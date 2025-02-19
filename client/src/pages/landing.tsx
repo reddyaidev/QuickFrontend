@@ -3,56 +3,88 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Logo from "@/components/logo";
 import { loginWithGoogle } from "@/lib/firebase";
-import { Input } from "@/components/ui/input";
-import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { FcGoogle } from "react-icons/fc";
-import { UserIcon } from "lucide-react";
 import { useState } from "react";
+import { Divider } from "@/components/ui/divider";
+import { LoginForm, SignUpForm } from "@/components/auth/auth-forms";
+import { GoogleAuthButton, GuestAuthButton } from "@/components/auth/social-auth-buttons";
+import { toast } from "@/components/ui/use-toast";
+import { COLORS } from "@/constants/theme";
 
 export default function LandingPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const loginForm = useForm();
-  const signupForm = useForm();
 
   const handleGuestLogin = async () => {
     try {
       setIsLoading(true);
       await loginWithGoogle();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to login as guest. Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleLogin = async (data: any) => {
+    try {
+      // Implement login logic
+      console.log("Login data:", data);
+      toast({
+        title: "Success",
+        description: "Logged in successfully!"
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to login. Please check your credentials.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleSignUp = async (data: any) => {
+    try {
+      // Implement signup logic
+      console.log("Signup data:", data);
+      toast({
+        title: "Success",
+        description: "Account created successfully!"
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create account. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#F5F5F5]">
-      <header className="container mx-auto px-4 py-6 flex justify-between items-center">
+    <div className="min-h-screen" style={{ backgroundColor: COLORS.background }}>
+      <header className="container mx-auto px-4 py-4 sm:py-6 flex flex-col sm:flex-row justify-between items-center gap-4">
         <Logo />
-        <Button variant="secondary">Service Provider</Button>
+        <Button variant="secondary" className="w-full sm:w-auto">Service Provider</Button>
       </header>
 
-      <main className="container mx-auto px-4 py-12">
-        <Card className="max-w-md mx-auto">
+      <main className="container mx-auto px-4 py-8 sm:py-12">
+        <Card className="max-w-[95%] sm:max-w-md mx-auto">
           <CardContent className="pt-6">
-            <Button 
-              onClick={handleGuestLogin}
-              disabled={isLoading}
-              className="w-full mb-4 bg-[#FFC107] text-black hover:bg-[#FFA000]"
-            >
-              <UserIcon className="mr-2 h-5 w-5" />
-              {isLoading ? "Logging in..." : "Continue as Guest"}
-            </Button>
+            <GoogleAuthButton 
+              onClick={loginWithGoogle}
+            //   disabled={true} Enable when Google auth is ready
+            />
 
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="bg-background px-2 text-muted-foreground">
-                  Or log in with email
-                </span>
-              </div>
-            </div>
+            <Divider text="Or continue with" />
+
+            <GuestAuthButton 
+              onClick={handleGuestLogin}
+              isLoading={isLoading}
+            />
+
+            <Divider text="Or log in with email" />
 
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-4">
@@ -61,99 +93,13 @@ export default function LandingPage() {
               </TabsList>
 
               <TabsContent value="login">
-                <Form {...loginForm}>
-                  <form className="space-y-4">
-                    <FormField
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input type="email" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      name="password" 
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <Input type="password" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <Button type="submit" className="w-full bg-[#FFC107] text-black hover:bg-[#FFA000]">
-                      Login
-                    </Button>
-                  </form>
-                </Form>
+                <LoginForm onSubmit={handleLogin} />
               </TabsContent>
 
               <TabsContent value="signup">
-                <Form {...signupForm}>
-                  <form className="space-y-4">
-                    <FormField
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input type="email" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <Input type="password" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Phone Number</FormLabel>
-                          <FormControl>
-                            <Input type="tel" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <Button type="submit" className="w-full bg-[#FFC107] text-black hover:bg-[#FFA000]">
-                      Sign Up
-                    </Button>
-                  </form>
-                </Form>
+                <SignUpForm onSubmit={handleSignUp} />
               </TabsContent>
             </Tabs>
-
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="bg-background px-2 text-muted-foreground">
-                  Or continue with
-                </span>
-              </div>
-            </div>
-
-            <Button 
-              disabled
-              className="w-full bg-blue-600 hover:bg-blue-700 opacity-50 cursor-not-allowed"
-            >
-              <FcGoogle className="mr-2 h-5 w-5" />
-              Continue with Google
-            </Button>
           </CardContent>
         </Card>
       </main>

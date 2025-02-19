@@ -1,4 +1,5 @@
 import { initializeApp } from "firebase/app";
+import { clearAllFormData } from './form-utils';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -45,10 +46,23 @@ class MockAuth {
     this.notifyListeners();
   }
 
-  signOut() {
-    this._currentUser = null;
-    localStorage.removeItem('mockAuthUser');
-    this.notifyListeners();
+  async signOut() {
+    try {
+      // Clear form data first
+      clearAllFormData();
+      
+      // Clear auth state
+      this._currentUser = null;
+      localStorage.removeItem('mockAuthUser');
+      
+      // Notify listeners immediately
+      this.notifyListeners();
+      
+      // Additional cleanup if needed
+      window.location.href = '/'; // Redirect to home page
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   }
 
   onAuthStateChanged(callback: AuthStateCallback) {
